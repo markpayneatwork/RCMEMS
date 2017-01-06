@@ -1,0 +1,14 @@
+Package: RCMEMS
+Type: Package
+Title: Copernicus Marine Environment Monitoring Service (CMEMS) download and
+    subsetting for R
+Version: 0.1.0
+Author: Mark R. Payne <mpay@aqua.dtu.dk>
+Maintainer: Mark R. Payne <mpay@aqua.dtu.dk>
+Description: Provies an easy R-friendly interface to the Motu Python client that
+    can be used to download and subset data directly from the CEMS SERVICE
+License: What license is it under?
+LazyData: TRUE
+Suggests:
+    raster
+RoxygenNote: 5.0.1
