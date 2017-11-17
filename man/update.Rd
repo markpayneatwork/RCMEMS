@@ -15,4 +15,3 @@
 \description{
 Updates a CMEMS.config object with new parameters
 }
-

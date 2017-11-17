@@ -3,7 +3,7 @@
 export(CMEMS.config)
 export(CMEMS.download)
 export(CMEMS.download.advanced)
-export(set.product.from.script)
+export(parse.CMEMS.script)
 exportClasses(CMEMS.config)
 exportMethods(show)
 exportMethods(update)

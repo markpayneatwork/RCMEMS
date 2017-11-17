@@ -5,7 +5,8 @@
 \alias{CMEMS.download.advanced}
 \title{Download from CMEMS}
 \usage{
-CMEMS.download(x, ROI, date.range, out.path, depth.range = NULL, ...)
+CMEMS.download(x, ROI = "missing", date.range = "missing",
+  out.path = "missing", depth.range = "missing", ...)
 
 CMEMS.download.advanced(x, out.dir = NULL, out.name = NULL,
   date.min = NULL, date.max = NULL, latitude.min = NULL,
@@ -59,8 +60,11 @@ provided - the \code{CMEMS.download} interface is a simple interface taking adva
 \code{\link{CMEMS.download.advanced}} interface provides the full functionality of the motu client.
 CMEMS.download.advanced
 }
+\details{
+Arguments provided to  \code{\link{CMEMS.download}} and  \code{\link{CMEMS.download.advanced}} override
+any arguments supplied in the \code{\link{CMEMS.config}} object, x.
+}
 \seealso{
 Details and documentation on the Motu client, including releases of the software to download, can be
  found on the associated GitHub site, \url{https://github.com/clstoulouse/motu-client-python}
 }
-

@@ -42,9 +42,29 @@ cas for Central Authentication Service}
 \item{\code{product.id}}{The product (data set) to download (string)}
 
 \item{\code{variable}}{The variable to download (vector of strings)}
+
+\item{\code{date.min}}{The start of the time range to download}
+
+\item{\code{date.max}}{The end of the time range to download}
+
+\item{\code{latitude.min}}{The southern limit of the spatial subset}
+
+\item{\code{latitude.max}}{The northern limit of the spatial subset}
+
+\item{\code{longitude.min}}{The western limit of the spatial subset}
+
+\item{\code{longitude.max}}{The eastern limit of the spatial subset}
+
+\item{\code{depth.min}}{The shallow limit of the spatial subset}
+
+\item{\code{depth.max}}{The deep limit of the spatial subset}
+
+\item{\code{out.dir}}{The output directory}
+
+\item{\code{out.name}}{The filename to write to}
 }}
+
 \seealso{
 Details and documentation on the Motu client, including releases of the software to download, can be
  found on the associated GitHub site, \url{https://github.com/clstoulouse/motu-client-python}
 }
-

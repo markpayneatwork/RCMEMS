@@ -1,26 +1,38 @@
-#' Get product details from CMEMS command-line script
+#' Get details from CMEMS command-line script
 #'
-#' Extracts the available details from a CMEMS script
+#' Extracts the available details from a download script provided by CMEMS and uses it
+#' to create an CMEMS.config object
 #'
 #' @export
 #' @param script A text string provided by the CMEMS website
 #' @details The CMEMS website has subsetting functionality that can be used as a template generate a download script for use with the motu
-#' client (usually accessed by clicking on the "View Script" button when preparing to download). The function \code{set.product.from.script}
+#' client (usually accessed by clicking on the "View Script" button when preparing to download). This function
 #' saves the hard work of having to figure out the parameters for use with the \code{RCMEMS} package by parsing this command and
-#' extracting the relevant information - are then added to the local configuration using the \code{set.CMEMS.product} command.
-set.product.from.script <- function(script){
+#' extracting the relevant information.
+parse.CMEMS.script <- function(script){
   #Extract elements
-  extract.arg <- function(arg,x) {gsub(paste("^.*?",arg," (.*?) .*$",sep=""),"\\1",x) }
+  extract.arg <- function(arg,x) {
+    gsub(paste("^.*?",arg," (.*?) -.{1} .*$",sep=""),"\\1",paste(x,"-$ ")) }
   argl <- list()
-  argl$motu <- extract.arg("-m",script)
-  argl$service.id <- extract.arg("-s",script)
-  argl$product.id <- extract.arg("-d",script)
-  argl$variable <- extract.arg("-v",script)
+  argl$python <- gsub("^(.*?) .*$","\\1",script)
+  argl$script <- gsub("^.*? (.*?) .*$","\\1",script)
+
+  #Mapping between command line args and CMEMS.config
+  arg.map <- list(user="-u",pwd="-p",motu="-m",
+                  service.id="-s",product.id="-d",
+                  variable="-v",
+                  longitude.min="-x",longitude.max="-X",
+                  latitude.min="-y",latitude.max="-Y",
+                  date.min="-t",date.max="-T",
+                  out.dir="-o",out.name="-f")
+  for(a in names(arg.map)){
+    argl[[a]] <- extract.arg(arg.map[[a]],script)
+  }
 
   #Set the options
-  do.call(set.CMEMS.product,argl)
+  cfg <- do.call(CMEMS.config,argl)
 
-  return(argl)
+  return(cfg)
 }
 
 #' Download from CMEMS
@@ -52,23 +64,36 @@ set.product.from.script <- function(script){
 #' @param out.dir The output dir (string)
 #' @param out.name The output file name (string)
 #' @param debug Allows debugging of the motu client command - builds the command without running it (logical)
+#' @details Arguments provided to  \code{\link{CMEMS.download}} and  \code{\link{CMEMS.download.advanced}} override
+#' any arguments supplied in the \code{\link{CMEMS.config}} object, x.
 #' @return If debug is TRUE, returns the full command to the motu client, ready to be run (via \code{system()}) or checked manually. If
 #' debug is FALSE (the default), runs the command and returns the error code associated with the script.
 CMEMS.download <- function(x,
-                           ROI,
-                           date.range,
-                           out.path,
-                           depth.range=NULL,...) {
+                           ROI="missing",
+                           date.range="missing",
+                           out.path="missing",
+                           depth.range="missing",
+                           ...) {
   require(raster)
   #Build spatial ROI arguments
-  ROI.args <- as.list(structure(ROI[1:4],names=c("longitude.min","longitude.max","latitude.min","latitude.max")))
+  if(missing("ROI")) {
+    ROI.args <- sapply(c("longitude.min","longitude.max","latitude.min","latitude.max"),
+                       slot,object=x,simplify=FALSE)
+  } else { #Take it from the function argument
+    ROI.args <- as.list(structure(ROI[1:4],names=c("longitude.min","longitude.max","latitude.min","latitude.max")))
+
+  }
 
   #Build date variables
-  date.arg <- as.list(structure(format(range(date.range),'"%Y-%m-%d %H:%M:%S"'),names=c("date.min","date.max")))
+  if(missing(date.range)){
+    date.arg <- list(date.min=x@date.min,date.max=x@date.max)
+  } else {
+    date.arg <- as.list(structure(format(range(date.range),'"%Y-%m-%d %H:%M:%S"'),names=c("date.min","date.max")))
+  }
 
   #Build depth variables, if supplied
-  if(is.null(depth.range)) {
-    depth.args <- NULL
+  if(missing(depth.range)) {
+    depth.args <- list(depth.min=x@depth.min,depth.max=x@depth.max)
   } else if(!is.numeric(depth.range)) {
     stop("'depth.range' requires a numeric argument. To use the 'Surface' argument, please use the depth.min and
          depth.max arguments of CMEMS.advanced.")
@@ -77,7 +102,11 @@ CMEMS.download <- function(x,
   }
 
   #Split out.path into separate file names and directories
-  path.arg <- list(out.dir=dirname(out.path),out.name=basename(out.path))
+  if(missing(out.path)) {
+    path.arg <- list(out.dir=x@out.dir,out.name=x@out.name)
+  } else {
+    path.arg <- list(out.dir=dirname(out.path),out.name=basename(out.path))
+  }
 
   #Combine all argument and use the ... to allow additional argument or overwriting
   arg.l <- c(list(x=x),ROI.args,date.arg,depth.args,path.arg)
@@ -106,9 +135,6 @@ CMEMS.download.advanced <- function(x,
                                     debug=FALSE) {
   #First check for a valid configuration
 
-  #Setup the core command
-  cmd <- paste(x@python, x@script)
-
   #Extract the rest of the options from the CMEMS.config object to be build into a command
   slts.rest <- slotNames(x)[-which(slotNames(x) %in% c("python","script"))]
   cfg.l <- lapply(slts.rest,function(n) slot(x,n))
@@ -124,14 +150,15 @@ CMEMS.download.advanced <- function(x,
   all.motu.args.l <- c(cfg.l,this.argl)
   motu.args.l <- all.motu.args.l[sapply(all.motu.args.l,length)!=0]
 
-  #Build a single command
+  #Build a list of arguments
   names(motu.args.l) <- gsub("\\.","-",names(motu.args.l))
-  cmd.str <- sprintf("--%s=%s",names(motu.args.l),motu.args.l)
-  cmd <- paste(cmd,paste(cmd.str,collapse=" "))
+  args.fmt <- sprintf("--%s=%s",names(motu.args.l),motu.args.l)
+
 
   #Run it
   if(!debug) {
-    err.code <- system(cmd)
+    err.code <- system2(command=x@python, args=c(x@script,args.fmt))
+    if(err.code!=0) stop("Error in running CMEMS download command.")
     return(err.code)
   } else{
     return(cmd)

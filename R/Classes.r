@@ -24,6 +24,17 @@
 #' @slot service.id The service identifier (string)
 #' @slot product.id The product (data set) to download (string)
 #' @slot variable The variable to download (vector of strings)
+#' @slot date.min The start of the time range to download
+#' @slot date.max  The end of the time range to download
+#' @slot latitude.min The southern limit of the spatial subset
+#' @slot latitude.max The northern limit of the spatial subset
+#' @slot longitude.min The western limit of the spatial subset
+#' @slot longitude.max The eastern limit of the spatial subset
+#' @slot depth.min The shallow limit of the spatial subset
+#' @slot depth.max The deep limit of the spatial subset
+#' @slot out.dir The output directory
+#' @slot out.name The filename to write to
+
 CMEMS.config <- setClass("CMEMS.config",slots=list(python="character",
                                                    script="character",
                                                    user="character",
@@ -39,7 +50,17 @@ CMEMS.config <- setClass("CMEMS.config",slots=list(python="character",
                                                    motu="character",
                                                    service.id="character",
                                                    product.id="character",
-                                                   variable="character"),
+                                                   variable="character",
+                                                   date.min="character",
+                                                   date.max="character",
+                                                   latitude.min="character",
+                                                   latitude.max="character",
+                                                   longitude.min="character",
+                                                   longitude.max="character",
+                                                   depth.min="character",
+                                                   depth.max="character",
+                                                   out.dir="character",
+                                                   out.name="character"),
                          prototype = list(python="python"))
 
 #' Update a CMEMS.config object
@@ -82,13 +103,25 @@ setMethod("show","CMEMS.config", function(object) {
   }
 
   product.slots <- c("motu","service.id","product.id","variable")
+  subset.slots <- c("date.min","date.max","latitude.min","latitude.max",
+                    "longitude.min", "longitude.max", "depth.min", "depth.max")
+  output.slots <- c("out.dir","out.name")
   cat("CMEMS client configuration options\n")
-  for(i in setdiff(slotNames("CMEMS.config"),product.slots)) {
+  for(i in setdiff(slotNames("CMEMS.config"),c(product.slots,subset.slots,output.slots))) {
     show.slot(object,i)}
 
   cat("CMEMS product specification\n")
   for(i in product.slots) {
     show.slot(object,i)}
+
+  cat("Subsetting specification\n")
+  for(i in subset.slots) {
+    show.slot(object,i)}
+
+  cat("Output specification\n")
+  for(i in output.slots) {
+    show.slot(object,i)}
+
 
 })
 
