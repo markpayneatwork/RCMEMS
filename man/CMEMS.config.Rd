@@ -43,17 +43,17 @@ cas for Central Authentication Service}
 
 \item{\code{variable}}{The variable to download (vector of strings)}
 
-\item{\code{date.min}}{The start of the time range to download}
+\item{\code{date.min}}{The min date with optional hour resolution (string following format YYYY-MM-DD [HH:MM:SS])}
 
-\item{\code{date.max}}{The end of the time range to download}
+\item{\code{date.max}}{The max date with optional hour resolution (string following format YYYY-MM-DD [HH:MM:SS ])}
 
-\item{\code{latitude.min}}{The southern limit of the spatial subset}
+\item{\code{latitude.min}}{The southern limit of the spatial subset (string)}
 
-\item{\code{latitude.max}}{The northern limit of the spatial subset}
+\item{\code{latitude.max}}{The northern limit of the spatial subset (string)}
 
-\item{\code{longitude.min}}{The western limit of the spatial subset}
+\item{\code{longitude.min}}{The western limit of the spatial subset (string)}
 
-\item{\code{longitude.max}}{The eastern limit of the spatial subset}
+\item{\code{longitude.max}}{The eastern limit of the spatial subset (string)}
 
 \item{\code{depth.min}}{The shallow limit of the spatial subset}
 

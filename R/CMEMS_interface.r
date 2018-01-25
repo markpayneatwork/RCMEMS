@@ -11,8 +11,6 @@
 #' extracting the relevant information.
 parse.CMEMS.script <- function(script){
   #Extract elements
-  extract.arg <- function(arg,x) {
-    gsub(paste("^.*?",arg," (.*?) -.{1} .*$",sep=""),"\\1",paste(x,"-$ ")) }
   argl <- list()
   argl$python <- gsub("^(.*?) .*$","\\1",script)
   argl$script <- gsub("^.*? (.*?) .*$","\\1",script)
@@ -25,6 +23,10 @@ parse.CMEMS.script <- function(script){
                   latitude.min="-y",latitude.max="-Y",
                   date.min="-t",date.max="-T",
                   out.dir="-o",out.name="-f")
+  extract.arg <- function(arg,x) {
+    txt <- gsub(paste("^.*?",arg," (.*?) -.{1} .*$",sep=""),"\\1",paste(x,"-$ "))
+
+    }
   for(a in names(arg.map)){
     argl[[a]] <- extract.arg(arg.map[[a]],script)
   }

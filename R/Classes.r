@@ -24,12 +24,12 @@
 #' @slot service.id The service identifier (string)
 #' @slot product.id The product (data set) to download (string)
 #' @slot variable The variable to download (vector of strings)
-#' @slot date.min The start of the time range to download
-#' @slot date.max  The end of the time range to download
-#' @slot latitude.min The southern limit of the spatial subset
-#' @slot latitude.max The northern limit of the spatial subset
-#' @slot longitude.min The western limit of the spatial subset
-#' @slot longitude.max The eastern limit of the spatial subset
+#' @slot date.min The min date with optional hour resolution (string following format YYYY-MM-DD [HH:MM:SS])
+#' @slot date.max The max date with optional hour resolution (string following format YYYY-MM-DD [HH:MM:SS ])
+#' @slot latitude.min The southern limit of the spatial subset (string)
+#' @slot latitude.max The northern limit of the spatial subset (string)
+#' @slot longitude.min The western limit of the spatial subset (string)
+#' @slot longitude.max The eastern limit of the spatial subset (string)
 #' @slot depth.min The shallow limit of the spatial subset
 #' @slot depth.max The deep limit of the spatial subset
 #' @slot out.dir The output directory
