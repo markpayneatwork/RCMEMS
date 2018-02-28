@@ -5,28 +5,51 @@
 #'
 #' @export
 #' @param script A text string provided by the CMEMS website
+#' @param short.parameters A logical variable indicating whether the script provided by CMEMS
+#' uses short, single-letter, argument names (e.g. -u), or long, expanded, argument names 
+#' (e.g. --user). Earlier versions of CMEMS used the short format - the current iteration uses
+#' the more intuitive long argument names. This argument is therefore included to allow compatability
+#' with older script formats.
 #' @details The CMEMS website has subsetting functionality that can be used as a template generate a download script for use with the motu
 #' client (usually accessed by clicking on the "View Script" button when preparing to download). This function
 #' saves the hard work of having to figure out the parameters for use with the \code{RCMEMS} package by parsing this command and
 #' extracting the relevant information.
-parse.CMEMS.script <- function(script){
+parse.CMEMS.script <- function(script,short.parameters=FALSE){
   #Extract elements
   argl <- list()
   argl$python <- gsub("^(.*?) .*$","\\1",script)
   argl$script <- gsub("^.*? (.*?) .*$","\\1",script)
 
   #Mapping between command line args and CMEMS.config
-  arg.map <- list(user="-u",pwd="-p",motu="-m",
-                  service.id="-s",product.id="-d",
-                  variable="-v",
-                  longitude.min="-x",longitude.max="-X",
-                  latitude.min="-y",latitude.max="-Y",
-                  date.min="-t",date.max="-T",
-                  out.dir="-o",out.name="-f")
-  extract.arg <- function(arg,x) {
-    txt <- gsub(paste("^.*?",arg," (.*?) -.{1} .*$",sep=""),"\\1",paste(x,"-$ "))
-
+  if(short.parameters) {
+    #Old mapping, based on 
+    arg.map <- list(user="-u",pwd="-p",motu="-m",
+                    service.id="-s",product.id="-d",
+                    variable="-v",
+                    longitude.min="-x",longitude.max="-X",
+                    latitude.min="-y",latitude.max="-Y",
+                    date.min="-t",date.max="-T",
+                    depth.min="-z", depth.max="-Z",
+                    out.dir="-o",out.name="-f")
+    extract.arg <- function(arg,x) {
+      txt <- gsub(paste("^.*?",arg," (.*?) -.{1} .*$",sep=""),"\\1",paste(x,"-$ "))
+      
     }
+  } else {
+      arg.map <- list(user="--user",pwd="--pwd",motu="--motu",
+                  service.id="--service-id",product.id="--product-id",
+                  variable="--variable",
+                  longitude.min="--longitude-min",longitude.max="--longitude-max",
+                  latitude.min="--latitude-min",latitude.max="--latitude-max",
+                  date.min="--date-min",date.max="--date-max",
+                  depth.min="--depth-min", depth.max="--depth-max",
+                  out.dir="--out-dir",out.name="--out-name")
+      extract.arg <- function(arg,x) {
+        txt <- gsub(paste("^.*?",arg," (.+?) .*$",sep=""),"\\1",paste(x," "))
+      }
+  }
+
+  #Now do the extraction
   for(a in names(arg.map)){
     argl[[a]] <- extract.arg(arg.map[[a]],script)
   }
@@ -39,12 +62,12 @@ parse.CMEMS.script <- function(script){
 
 #' Download from CMEMS
 #'
-#' Provides R interfaces to the Python-based Motu client developed to provide access to CMEMS data. Two interfaces are
-#' provided - the \code{CMEMS.download} interface is a simple interface taking advantage of R classes, while the
-#' \code{\link{CMEMS.download.advanced}} interface provides the full functionality of the motu client.
-#'CMEMS.download.advanced
-#' @seealso Details and documentation on the Motu client, including releases of the software to download, can be
-#'  found on the associated GitHub site, \url{https://github.com/clstoulouse/motu-client-python}
+#' Provides R interfaces to the Python-based Motu client developed to provide access to 
+#' CMEMS data. Two interfaces are provided - the \code{CMEMS.download} interface is a simple 
+#' interface taking advantage of R classes, while the \code{\link{CMEMS.download.advanced}}
+#' interface provides access to the full functionality of the motu client.
+#' @seealso Details and documentation on the Motu client, including releases of the software 
+#' to download, can be found on the associated GitHub site, \url{https://github.com/clstoulouse/motu-client-python}
 #' @name CMEMS.download
 #' @export
 #' @param x An object of class \code{\link{CMEMS.config}} containing the configuration parameters
@@ -68,6 +91,10 @@ parse.CMEMS.script <- function(script){
 #' @param debug Allows debugging of the motu client command - builds the command without running it (logical)
 #' @details Arguments provided to  \code{\link{CMEMS.download}} and  \code{\link{CMEMS.download.advanced}} override
 #' any arguments supplied in the \code{\link{CMEMS.config}} object, x.
+#' @details If the  \code{\link{CMEMS.config}} object, x, is missing either the username or the
+#' password, both are dropped from the call to the MOTU client - in this case, the client will 
+#' use the local configuration file. See the README.md file supplied with the MOTU client for how
+#' to set this up.
 #' @return If debug is TRUE, returns the full command to the motu client, ready to be run (via \code{system()}) or checked manually. If
 #' debug is FALSE (the default), runs the command and returns the error code associated with the script.
 CMEMS.download <- function(x,
@@ -142,12 +169,21 @@ CMEMS.download.advanced <- function(x,
   cfg.l <- lapply(slts.rest,function(n) slot(x,n))
   names(cfg.l) <- slts.rest
 
+  #Check whether both the username and the password have been supplied.
+  #If not, drop these from the arguments to the MOTU script - this should 
+  #encourage the script to pick up the names from the local configuration file
+  if(x@user=="" | is.null(x@user) | x@pwd=="" | is.null(x@pwd)) {
+    message("Note: Username or password is missing - using local configuration file instead.")
+    cfg.l[c("user","pwd")] <- NULL
+  }
+  
+  
   #Now take the rest of the configurations from this call and Populate it from the local enviroment
   this.arg.names <- formalArgs(CMEMS.download.advanced)
   this.arg.names <- subset(this.arg.names,!(this.arg.names %in% c("x","debug")))
   this.argl <- lapply(this.arg.names,function(n) get0(n))
   names(this.argl) <- this.arg.names
-
+  
   #Compile into a single list and drop the nulls
   all.motu.args.l <- c(cfg.l,this.argl)
   motu.args.l <- all.motu.args.l[sapply(all.motu.args.l,length)!=0]
@@ -163,7 +199,7 @@ CMEMS.download.advanced <- function(x,
     if(err.code!=0) stop("Error in running CMEMS download command.")
     return(err.code)
   } else{
-    return(cmd)
+    return(list(command=x@python, script=x@script, args=args.fmt))
   }
 }
 

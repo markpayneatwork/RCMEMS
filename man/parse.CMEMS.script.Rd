@@ -4,10 +4,16 @@
 \alias{parse.CMEMS.script}
 \title{Get details from CMEMS command-line script}
 \usage{
-parse.CMEMS.script(script)
+parse.CMEMS.script(script, short.parameters = FALSE)
 }
 \arguments{
 \item{script}{A text string provided by the CMEMS website}
+
+\item{short.parameters}{A logical variable indicating whether the script provided by CMEMS
+uses short, single-letter, argument names (e.g. -u), or long, expanded, argument names 
+(e.g. --user). Earlier versions of CMEMS used the short format - the current iteration uses
+the more intuitive long argument names. This argument is therefore included to allow compatability
+with older script formats.}
 }
 \description{
 Extracts the available details from a download script provided by CMEMS and uses it

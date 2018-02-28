@@ -55,16 +55,21 @@ If debug is TRUE, returns the full command to the motu client, ready to be run (
 debug is FALSE (the default), runs the command and returns the error code associated with the script.
 }
 \description{
-Provides R interfaces to the Python-based Motu client developed to provide access to CMEMS data. Two interfaces are
-provided - the \code{CMEMS.download} interface is a simple interface taking advantage of R classes, while the
-\code{\link{CMEMS.download.advanced}} interface provides the full functionality of the motu client.
-CMEMS.download.advanced
+Provides R interfaces to the Python-based Motu client developed to provide access to 
+CMEMS data. Two interfaces are provided - the \code{CMEMS.download} interface is a simple 
+interface taking advantage of R classes, while the \code{\link{CMEMS.download.advanced}}
+interface provides access to the full functionality of the motu client.
 }
 \details{
 Arguments provided to  \code{\link{CMEMS.download}} and  \code{\link{CMEMS.download.advanced}} override
 any arguments supplied in the \code{\link{CMEMS.config}} object, x.
+
+If the  \code{\link{CMEMS.config}} object, x, is missing either the username or the
+password, both are dropped from the call to the MOTU client - in this case, the client will 
+use the local configuration file. See the README.md file supplied with the MOTU client for how
+to set this up.
 }
 \seealso{
-Details and documentation on the Motu client, including releases of the software to download, can be
- found on the associated GitHub site, \url{https://github.com/clstoulouse/motu-client-python}
+Details and documentation on the Motu client, including releases of the software 
+to download, can be found on the associated GitHub site, \url{https://github.com/clstoulouse/motu-client-python}
 }

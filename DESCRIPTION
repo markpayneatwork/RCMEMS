@@ -1,12 +1,12 @@
 Package: RCMEMS
 Type: Package
 Title: R interface to the Copernicus Marine Environment Monitoring Service (CMEMS)
-Version: 0.3.0
+Version: 0.4.0
 Author: Mark R. Payne <mpay@aqua.dtu.dk>
 Maintainer: Mark R. Payne <mpay@aqua.dtu.dk>
 Description: Provies an R-friendly interface to the Python-based client that
     can be used to download and subset data directly from the CMEMS data stores
-License: What license is it under?
+License: GPL (>= 2)
 LazyData: TRUE
 Suggests:
     raster
