@@ -2,9 +2,9 @@
 % Please edit documentation in R/CMEMS_interface.r
 \name{parse.CMEMS.script}
 \alias{parse.CMEMS.script}
-\title{Get details from CMEMS command-line script}
+\title{Get configuration from CMEMS command-line script}
 \usage{
-parse.CMEMS.script(script, short.parameters = FALSE)
+parse.CMEMS.script(script, short.parameters = FALSE, parse.user = FALSE)
 }
 \arguments{
 \item{script}{A text string provided by the CMEMS website}
@@ -14,6 +14,9 @@ uses short, single-letter, argument names (e.g. -u), or long, expanded, argument
 (e.g. --user). Earlier versions of CMEMS used the short format - the current iteration uses
 the more intuitive long argument names. This argument is therefore included to allow compatability
 with older script formats.}
+
+\item{parse.user}{A logical variable indicating whether the username and password should be parsed
+or not. Typically, these are place holder values, so it's not really necessary to parse them.}
 }
 \description{
 Extracts the available details from a download script provided by CMEMS and uses it
@@ -24,4 +27,12 @@ The CMEMS website has subsetting functionality that can be used as a template ge
 client (usually accessed by clicking on the "View Script" button when preparing to download). This function
 saves the hard work of having to figure out the parameters for use with the \code{RCMEMS} package by parsing this command and
 extracting the relevant information.
+}
+\examples{
+script <- 'python <PATH_TO_MOTUCLIENT_DIR>/motu-client.py --user <USERNAME> --pwd <PASSWORD> --motu http://nrtcmems.mercator-ocean.fr/motu-web/Motu --service-id GLOBAL_ANALYSIS_FORECAST_PHY_001_024-TDS --product-id global-analysis-forecast-phy-001-024-monthly --longitude-min -180 --longitude-max 179.91667175293 --latitude-min -80 --latitude-max 90 --date-min "2007-01-16 12:00:00" --date-max "2018-01-16 12:00:00" --depth-min 186.1255 --depth-max 763.3333 --variable so -out-dir <OUTPUT_DIR> --out-name <OUTPUT_FILENAME>'
+cfg <- parse.CMEMS.script(script)
+cfg
+#Note that the error in "-out-dir" (using one minus, instead of two) as been picked up.
+#We can correct this using update
+cfg2 <- update(cfg,out.dir="data")
 }

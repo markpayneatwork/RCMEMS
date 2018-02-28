@@ -69,6 +69,21 @@ password, both are dropped from the call to the MOTU client - in this case, the 
 use the local configuration file. See the README.md file supplied with the MOTU client for how
 to set this up.
 }
+\examples{
+\dontrun{
+library(raster)
+cfg <- CMEMS.config(python="python",
+                    script="~/Documents/common_data/motu-client-python/motu-client.py",
+                    motu="http://cmems.isac.cnr.it/mis-gateway-servlet/Motu",
+                    service.id = "SST_GLO_SST_L4_REP_OBSERVATIONS_010_011-TDS",
+                    product.id = "METOFFICE-GLO-SST-L4-RAN-OBS-SST",
+                    variable = "analysed_sst")
+CMEMS.download(cfg,
+               ROI = extent(8,13,55,59),
+               date.range = c(ISOdate(2001,08,01),ISOdate(2001,08,10)),
+               "test.nc",debug=FALSE)
+}
+}
 \seealso{
 Details and documentation on the Motu client, including releases of the software 
 to download, can be found on the associated GitHub site, \url{https://github.com/clstoulouse/motu-client-python}
