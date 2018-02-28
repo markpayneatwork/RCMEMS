@@ -6,7 +6,7 @@ Author: Mark R. Payne <mpay@aqua.dtu.dk>
 Maintainer: Mark R. Payne <mpay@aqua.dtu.dk>
 Description: Provies an R-friendly interface to the Python-based client that
     can be used to download and subset data directly from the CMEMS data stores
-License: GPL (>= 2)
+License: Beerware License (Revision 42). Mark R.Payne wrote this package. As long as you retain this notice you can do whatever you want with this stuff. If we meet some day, and you think this stuff is worth it, you can buy me a beer in return
 LazyData: TRUE
 Suggests:
     raster
