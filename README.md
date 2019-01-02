@@ -27,6 +27,12 @@ You can install this package directly from the GitHub repository using the follo
 ```{R}
 devtools::install_github("markpayneatwork/RCMEMS")
 ```
+### Passwords
+
+Including usernames and passwords in scripts is generally not a particularly good idea, especially if you are also publishing the code on e.g. GitHub. The Motu-client provides a way around this, by letting you specify the passwords in a separate file on your machine. See the motu documentation for more details:
+
+https://github.com/clstoulouse/motu-client-python#Configuration
+
 
 ## RCMEMS Workflow
 
