@@ -299,3 +299,26 @@ product.description <- function(x,variable="missing") {
   }
   return(rtn) 
 }
+
+
+
+#' Get Motu client version
+#' 
+#' Returns the version number of the motu client specified by x
+#'
+#' @param x An object of class \code{\link{CMEMS.config}} containing the configuration 
+#' parameters. At a minimum, the \code{python} and \code{script} slots need to be populated.
+#'
+#' @return NULL
+#' @export
+#'
+#' @examples
+#' ## NOT RUN ## 
+#' cfg <- CMEMS.config(python="python",script="motu-client.py")
+#' get.motu.client.version(cfg)
+#' cfg
+
+get.motu.client.version <- function(x) {
+  rtn <- system2(command=x@python, args=c(x@script,"--version"))
+  return(rtn)
+}

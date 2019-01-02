@@ -3,6 +3,7 @@
 export(CMEMS.config)
 export(CMEMS.download)
 export(CMEMS.download.advanced)
+export(get.motu.client.version)
 export(parse.CMEMS.script)
 export(product.description)
 exportClasses(CMEMS.config)
