@@ -44,3 +44,7 @@ Once installed, using RCMEMS involves the following steps
 * Modify the configuration object further, if required, using the `update()` function
 * When you're ready to go, download the data using the `CMEMS.download()`function.
 
+## Getting help
+
+The package is (reasonably) well documented, so check the help files first. The help documentation for the motu-client can also be useful at times. If all else fails after reasonable efforts, please feel free to file a bug-report here (under "Issues") - that way, everyone can see the problem and hopefully learn from it. I'm happy to offer help, but prefer it to go through the Issue tracker.
+
