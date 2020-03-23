@@ -1,7 +1,7 @@
 Package: RCMEMS
 Type: Package
 Title: R interface to the Copernicus Marine Environment Monitoring Service (CMEMS)
-Version: 0.5.0
+Version: 1.0
 Author: Mark R. Payne <mpay@aqua.dtu.dk>
 Maintainer: Mark R. Payne <mpay@aqua.dtu.dk>
 Description: Provies an R-friendly interface to the Python-based client that

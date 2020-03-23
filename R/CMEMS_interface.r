@@ -4,12 +4,7 @@
 #' to create an CMEMS.config object
 #'
 #' @export
-#' @param script A text string provided by the CMEMS website
-#' @param short.parameters A logical variable indicating whether the script provided by CMEMS
-#' uses short, single-letter, argument names (e.g. -u), or long, expanded, argument names 
-#' (e.g. --user). Earlier versions of CMEMS used the short format - the current iteration uses
-#' the more intuitive long argument names. This argument is therefore included to allow compatability
-#' with older script formats.
+#' @param script A text string for a download script provided by the CMEMS website
 #' @param parse.user A logical variable indicating whether the username and password should be parsed
 #' or not. Typically, these are place holder values, so it's not really necessary to parse them.
 #' @details The CMEMS website has subsetting functionality that can be used as a template generate a download script for use with the motu
@@ -17,56 +12,56 @@
 #' saves the hard work of having to figure out the parameters for use with the \code{RCMEMS} package by parsing this command and
 #' extracting the relevant information.
 #' @examples
-#' script <- 'python <PATH_TO_MOTUCLIENT_DIR>/motu-client.py --user <USERNAME> --pwd <PASSWORD> --motu http://nrtcmems.mercator-ocean.fr/motu-web/Motu --service-id GLOBAL_ANALYSIS_FORECAST_PHY_001_024-TDS --product-id global-analysis-forecast-phy-001-024-monthly --longitude-min -180 --longitude-max 179.91667175293 --latitude-min -80 --latitude-max 90 --date-min "2007-01-16 12:00:00" --date-max "2018-01-16 12:00:00" --depth-min 186.1255 --depth-max 763.3333 --variable so -out-dir <OUTPUT_DIR> --out-name <OUTPUT_FILENAME>'
+#' script <- 'python -m motuclient --user <USERNAME> --pwd <PASSWORD> --motu http://nrtcmems.mercator-ocean.fr/motu-web/Motu --service-id GLOBAL_ANALYSIS_FORECAST_PHY_001_024-TDS --product-id global-analysis-forecast-phy-001-024-monthly --longitude-min -180 --longitude-max 179.91667175293 --latitude-min -80 --latitude-max 90 --date-min "2007-01-16 12:00:00" --date-max "2018-01-16 12:00:00" --depth-min 186.1255 --depth-max 763.3333 --variable so -out-dir <OUTPUT_DIR> --out-name <OUTPUT_FILENAME>'
 #' cfg <- parse.CMEMS.script(script)
 #' cfg
-#' #Note that the error in "-out-dir" (using one minus, instead of two) as been picked up.
+#' #Note that the error in "-out-dir" (using one minus, instead of two) has been picked up.
 #' #We can correct this using update
 #' cfg2 <- update(cfg,out.dir="data")
-parse.CMEMS.script <- function(script,short.parameters=FALSE,parse.user=FALSE){
-  #Extract elements
-  argl <- list()
-  argl$python <- gsub("^(.*?) .*$","\\1",script)
-  argl$script <- gsub("^.*? (.*?) .*$","\\1",script)
+parse.CMEMS.script <- function(script,parse.user=FALSE){
 
   #Mapping between command line args and CMEMS.config
-  if(short.parameters) {
-    #Old mapping, based on 
-    arg.map <- list(user="-u",pwd="-p",motu="-m",
-                    service.id="-s",product.id="-d",
-                    variable="-v",
-                    longitude.min="-x",longitude.max="-X",
-                    latitude.min="-y",latitude.max="-Y",
-                    date.min="-t",date.max="-T",
-                    depth.min="-z", depth.max="-Z",
-                    out.dir="-o",out.name="-f")
-    extract.arg <- function(arg,x) {
-      txt <- gsub(paste("^.*?",arg," (.*?) -.{1} .*$",sep=""),"\\1",paste(x,"-$ "))
-      
-    }
-  } else {
-      arg.map <- list(user="--user",pwd="--pwd",
-                      motu="--motu",
-                  service.id="--service-id",product.id="--product-id",
+  #Note that we only focus here on arguments supplied by a double "--", as this is easier to handle
+  arg.map <- list(module="-m",
+                  user="--user",
+                  pwd="--pwd",
+                  motu="--motu",
+                  service.id="--service-id",
+                  product.id="--product-id",
                   variable="--variable",
-                  longitude.min="--longitude-min",longitude.max="--longitude-max",
-                  latitude.min="--latitude-min",latitude.max="--latitude-max",
-                  date.min="--date-min",date.max="--date-max",
-                  depth.min="--depth-min", depth.max="--depth-max",
-                  out.dir="--out-dir",out.name="--out-name")
-      extract.arg <- function(arg,x) {
-        txt <- gsub(paste("^.*?",arg," (.+?) -.*$",sep=""),"\\1",paste(x," --"))
-      }
-  }
+                  longitude.min="--longitude-min",
+                  longitude.max="--longitude-max",
+                  latitude.min="--latitude-min",
+                  latitude.max="--latitude-max",
+                  date.min="--date-min",
+                  date.max="--date-max",
+                  depth.min="--depth-min",
+                  depth.max="--depth-max",
+                  out.dir="--out-dir",
+                  out.name="--out-name")
 
-  #Now do the extraction
+  #Break input script into its individual elements
+  script.atoms <- scan(text=script,what="character",quiet=TRUE)
+  
+  #Now do the extraction by looping over the list of argument names that we want to extract
+  #Find their location in the list, then extract the next element as the argument
+  argl <- list()
   for(a in names(arg.map)){
-    argl[[a]] <- extract.arg(arg.map[[a]],script)
+    arg.idx <- which(script.atoms==arg.map[[a]])
+    argl[[a]] <- script.atoms[arg.idx+1]
+  }
+  
+  #Handle the additional elements
+  argl$python <- gsub("^(.*?) .*$","\\1",script)
+  if(is.null(argl$module)) {
+    argl$script <- gsub("^.*? (.*?) .*$","\\1",script)
+  } else {
+    argl$module <- NULL
   }
 
   #Set the options
   cfg <- do.call(CMEMS.config,argl)
-  
+
   #Set user and password to null
   if(!parse.user) {
     cfg@user <- as.character(NULL)
@@ -112,12 +107,11 @@ parse.CMEMS.script <- function(script,short.parameters=FALSE,parse.user=FALSE){
 #' use the local configuration file. See the README.md file supplied with the MOTU client for how
 #' to set this up.
 #' @return If debug is TRUE, returns the full command to the motu client, ready to be run (via \code{system()}) or checked manually. If
-#' debug is FALSE (the default), runs the command and returns the error code associated with the script.
+#' debug is FALSE (the default), runs the command and returns the error code associated with the motuclient.
 #' @examples 
 #' \dontrun{
 #' library(raster)
 #' cfg <- CMEMS.config(python="python",
-#'                     script="~/Documents/common_data/motu-client-python/motu-client.py",
 #'                     motu="http://cmems.isac.cnr.it/mis-gateway-servlet/Motu",
 #'                     service.id = "SST_GLO_SST_L4_REP_OBSERVATIONS_010_011-TDS",
 #'                     product.id = "METOFFICE-GLO-SST-L4-RAN-OBS-SST",
@@ -203,10 +197,10 @@ CMEMS.download.advanced <- function(x,
   names(cfg.l) <- slts.rest
   
   #Check whether both the username and the password have been supplied.
-  #If not, drop these from the arguments to the MOTU script - this should 
-  #encourage the script to pick up the names from the local configuration file
+  #If not, drop these from the arguments to the command - this should 
+  #encourage the client to pick up the names from the local configuration file
   if(length(x@user)==0 | length(x@pwd)==0 ) {
-    message("Note: Username or password is missing - using local configuration file instead.")
+    message("RCMEMS: Username or password is missing - using local configuration file instead.")
     cfg.l[c("user","pwd")] <- NULL
   }
   
@@ -233,14 +227,22 @@ CMEMS.download.advanced <- function(x,
   motu.args.l <- all.motu.args.l[sapply(all.motu.args.l,length)!=0]
   names(motu.args.l) <- gsub("\\.","-",names(motu.args.l))
   args.fmt <- sprintf("--%s=%s",names(motu.args.l),motu.args.l)
+  
+  #Decide how to run it
+  if(is.null(x@script) | x@script=="") {
+    client.cmd <- "-m motuclient"
+  } else  {
+    client.cmd <- x@script
+  }
 
   #Run it
   if(!debug) {
-    err.code <- system2(command=x@python, args=c(x@script,args.fmt))
+    err.code <- system2(command=x@python, 
+                        args=c(client.cmd,args.fmt))
     if(err.code!=0) stop("Error in running CMEMS download command.")
     return(err.code)
   } else{
-    return(list(command=x@python, script=x@script, args=args.fmt))
+    return(list(command=x@python, args=c(client.cmd,args.fmt)))
   }
 }
 
@@ -281,8 +283,15 @@ product.description <- function(x,variable="missing") {
                 sprintf("--out-dir=%s",dirname(xml.fname)),
                 sprintf("--out-name=%s",basename(xml.fname)))
   
+  #Decide how to run it
+  if(is.null(x@script) | x@script=="") {
+    client.cmd <- "-m motuclient"
+  } else  {
+    client.cmd <- x@script
+  }
+  
   #Retrieve description
-  err.code <- system2(x@python,args=c(x@script,args.fmt,"--describe-product"))
+  err.code <- system2(x@python,args=c(client.cmd,args.fmt,"--describe-product"))
   if(err.code!=0) stop("Error in retrieving CMEMS product description")
   
   #Now import the xml

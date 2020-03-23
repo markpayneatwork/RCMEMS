@@ -8,7 +8,8 @@
 #' @exportClass CMEMS.config
 #' @export CMEMS.config
 #' @slot python Path to the local python installation
-#' @slot script Path to the local install of motu - normally this would point to the motu-client.py script
+#' @slot script path to local script for the motuclient. If NULL, then the client is involked via use of the
+#' "-m motuclient" argument to python (under the assumption that it is already installed)
 #' @slot user user name (string)
 #' @slot pwd user password (string)
 #' @slot auth-mode the authentication mode: [default: cas]. Use "none" for no authentication, "basic" for basic authentication,
@@ -61,7 +62,8 @@ CMEMS.config <- setClass("CMEMS.config",slots=list(python="character",
                                                    depth.max="character",
                                                    out.dir="character",
                                                    out.name="character"),
-                         prototype = list(python="python"))
+                         prototype = list(python="python",
+                                          script=as.character(NULL)))
 
 #' Update a CMEMS.config object
 #'
