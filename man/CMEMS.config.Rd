@@ -12,7 +12,8 @@ A class to store parameters used in configuring downloads from the CMEMS servers
 \describe{
 \item{\code{python}}{Path to the local python installation}
 
-\item{\code{script}}{Path to the local install of motu - normally this would point to the motu-client.py script}
+\item{\code{script}}{path to local script for the motuclient. If NULL, then the client is involked via use of the
+"-m motuclient" argument to python (under the assumption that it is already installed)}
 
 \item{\code{user}}{user name (string)}
 

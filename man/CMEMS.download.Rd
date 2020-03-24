@@ -5,13 +5,29 @@
 \alias{CMEMS.download.advanced}
 \title{Download from CMEMS}
 \usage{
-CMEMS.download(x, ROI = "missing", date.range = "missing",
-  out.path = "missing", depth.range = "missing", ...)
+CMEMS.download(
+  x,
+  ROI = "missing",
+  date.range = "missing",
+  out.path = "missing",
+  depth.range = "missing",
+  ...
+)
 
-CMEMS.download.advanced(x, out.dir = NULL, out.name = NULL,
-  date.min = NULL, date.max = NULL, latitude.min = NULL,
-  latitude.max = NULL, longitude.min = NULL, longitude.max = NULL,
-  depth.min = NULL, depth.max = NULL, debug = FALSE)
+CMEMS.download.advanced(
+  x,
+  out.dir = NULL,
+  out.name = NULL,
+  date.min = NULL,
+  date.max = NULL,
+  latitude.min = NULL,
+  latitude.max = NULL,
+  longitude.min = NULL,
+  longitude.max = NULL,
+  depth.min = NULL,
+  depth.max = NULL,
+  debug = FALSE
+)
 }
 \arguments{
 \item{x}{An object of class \code{\link{CMEMS.config}} containing the configuration parameters}
@@ -52,7 +68,7 @@ in \code{\link{CMEMS.download}} function.}
 }
 \value{
 If debug is TRUE, returns the full command to the motu client, ready to be run (via \code{system()}) or checked manually. If
-debug is FALSE (the default), runs the command and returns the error code associated with the script.
+debug is FALSE (the default), runs the command and returns the error code associated with the motuclient.
 }
 \description{
 Provides R interfaces to the Python-based Motu client developed to provide access to 
@@ -73,7 +89,6 @@ to set this up.
 \dontrun{
 library(raster)
 cfg <- CMEMS.config(python="python",
-                    script="~/Documents/common_data/motu-client-python/motu-client.py",
                     motu="http://cmems.isac.cnr.it/mis-gateway-servlet/Motu",
                     service.id = "SST_GLO_SST_L4_REP_OBSERVATIONS_010_011-TDS",
                     product.id = "METOFFICE-GLO-SST-L4-RAN-OBS-SST",

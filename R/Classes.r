@@ -63,7 +63,7 @@ CMEMS.config <- setClass("CMEMS.config",slots=list(python="character",
                                                    out.dir="character",
                                                    out.name="character"),
                          prototype = list(python="python",
-                                          script=as.character(NULL)))
+                                          script=as.character(NA)))
 
 #' Update a CMEMS.config object
 #'

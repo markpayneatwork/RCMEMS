@@ -15,7 +15,7 @@
 #' script <- 'python -m motuclient --user <USERNAME> --pwd <PASSWORD> --motu http://nrtcmems.mercator-ocean.fr/motu-web/Motu --service-id GLOBAL_ANALYSIS_FORECAST_PHY_001_024-TDS --product-id global-analysis-forecast-phy-001-024-monthly --longitude-min -180 --longitude-max 179.91667175293 --latitude-min -80 --latitude-max 90 --date-min "2007-01-16 12:00:00" --date-max "2018-01-16 12:00:00" --depth-min 186.1255 --depth-max 763.3333 --variable so -out-dir <OUTPUT_DIR> --out-name <OUTPUT_FILENAME>'
 #' cfg <- parse.CMEMS.script(script)
 #' cfg
-#' #Note that the error in "-out-dir" (using one minus, instead of two) has been picked up.
+#' #Note that the error in "-out-dir" (using one minus, instead of two) has been picked up and nothing.
 #' #We can correct this using update
 #' cfg2 <- update(cfg,out.dir="data")
 parse.CMEMS.script <- function(script,parse.user=FALSE){
@@ -48,7 +48,9 @@ parse.CMEMS.script <- function(script,parse.user=FALSE){
   argl <- list()
   for(a in names(arg.map)){
     arg.idx <- which(script.atoms==arg.map[[a]])
-    argl[[a]] <- script.atoms[arg.idx+1]
+    if(length(arg.idx)==1) {
+      argl[[a]] <- script.atoms[arg.idx+1]
+    }
   }
   
   #Handle the additional elements
@@ -99,6 +101,7 @@ parse.CMEMS.script <- function(script,parse.user=FALSE){
 #' @param describe.product It allows to have all updated information on a dataset. Output is in XML format
 #' @param out.dir The output dir (string)
 #' @param out.name The output file name (string)
+#' @param quiet Logical value, indicating whether to surpress output
 #' @param debug Allows debugging of the motu client command - builds the command without running it (logical)
 #' @details Arguments provided to  \code{\link{CMEMS.download}} and  \code{\link{CMEMS.download.advanced}} override
 #' any arguments supplied in the \code{\link{CMEMS.config}} object, x.
@@ -188,6 +191,7 @@ CMEMS.download.advanced <- function(x,
                                     longitude.max=NULL,
                                     depth.min=NULL,
                                     depth.max=NULL,
+                                    quiet=FALSE,
                                     debug=FALSE) {
   #First check for a valid configuration
 
@@ -207,7 +211,7 @@ CMEMS.download.advanced <- function(x,
   #Now take the rest of the configurations from this call and 
   #populate it from the local enviroment
   this.arg.names <- formalArgs(CMEMS.download.advanced)
-  this.arg.names <- subset(this.arg.names,!(this.arg.names %in% c("x","debug")))
+  this.arg.names <- subset(this.arg.names,!(this.arg.names %in% c("x","debug","quiet")))
   this.argl <- lapply(this.arg.names,function(n) get0(n))
   names(this.argl) <- this.arg.names
   
@@ -228,8 +232,11 @@ CMEMS.download.advanced <- function(x,
   names(motu.args.l) <- gsub("\\.","-",names(motu.args.l))
   args.fmt <- sprintf("--%s=%s",names(motu.args.l),motu.args.l)
   
+  #Add quietly, if necessary
+  if(quiet) {args.fmt <- c(args.fmt,"--quiet")}
+  
   #Decide how to run it
-  if(is.null(x@script) | x@script=="") {
+  if(is.na(x@script) ) {
     client.cmd <- "-m motuclient"
   } else  {
     client.cmd <- x@script
@@ -258,8 +265,10 @@ CMEMS.download.advanced <- function(x,
 #' and \code{product.id} slots need to be populated.
 #' @param variable Specifies the object to return. Valid values are "times" and 
 #' "depths". All other values, including omission, return an xml object describing the product.
+#' @param quiet Logical, indicating whether to surpress output
 #' @details This function returns the description that is associated with the particular product
 #' id. 
+
 #' @examples
 #' \dontrun{
 #' cfg <- CMEMS.config(python="python",
@@ -270,7 +279,7 @@ CMEMS.download.advanced <- function(x,
 #' SST.dates <- product.description(cfg,"times")
 #' range(as.Date(SST.dates))
 #'}
-product.description <- function(x,variable="missing") {
+product.description <- function(x,variable="missing",quiet=TRUE) {
   require(xml2)
   #Extract the rest of the options from the CMEMS.config object to be build into a command
   extract.these <- c("motu","service.id","product.id")
@@ -283,8 +292,11 @@ product.description <- function(x,variable="missing") {
                 sprintf("--out-dir=%s",dirname(xml.fname)),
                 sprintf("--out-name=%s",basename(xml.fname)))
   
+  #Add quietly, if necessary
+  if(quiet) {args.fmt <- c(args.fmt,"--quiet")}
+  
   #Decide how to run it
-  if(is.null(x@script) | x@script=="") {
+  if(is.na(x@script)) {
     client.cmd <- "-m motuclient"
   } else  {
     client.cmd <- x@script
@@ -328,6 +340,13 @@ product.description <- function(x,variable="missing") {
 #' cfg
 
 get.motu.client.version <- function(x) {
-  rtn <- system2(command=x@python, args=c(x@script,"--version"))
+  #Decide how to run it
+  if(is.na(x@script)) {
+    client.cmd <- "-m motuclient"
+  } else  {
+    client.cmd <- x@script
+  }
+  
+  rtn <- system2(command=x@python, args=c(client.cmd,"--version"))
   return(rtn)
 }
