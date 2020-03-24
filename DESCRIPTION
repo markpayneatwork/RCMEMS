@@ -9,5 +9,7 @@ Description: Provies an R-friendly interface to the Python-based client that
 License: Beerware License (Revision 42). Mark R.Payne wrote this package. As long as you retain this notice you can do whatever you want with this stuff. If we meet some day, and you think this stuff is worth it, you can buy me a beer in return
 LazyData: TRUE
 Suggests:
-    raster, xml2
-RoxygenNote: 6.0.1
+    raster,
+    xml2,
+    testthat (>= 2.1.0)
+RoxygenNote: 7.0.2
