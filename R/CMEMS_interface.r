@@ -28,7 +28,6 @@ parse.CMEMS.script <- function(script,parse.user=FALSE){
                   motu="--motu",
                   service.id="--service-id",
                   product.id="--product-id",
-                  variable="--variable",
                   longitude.min="--longitude-min",
                   longitude.max="--longitude-max",
                   latitude.min="--latitude-min",
@@ -50,16 +49,20 @@ parse.CMEMS.script <- function(script,parse.user=FALSE){
     arg.idx <- which(script.atoms==arg.map[[a]])
     if(length(arg.idx)==1) {
       argl[[a]] <- script.atoms[arg.idx+1]
-    }
+    } else if(length(arg.idx)>1) warning(sprintf('Multiple matches for "%s" argument. None selected.',arg.map[[a]]))
   }
   
-  #Handle the additional elements
+  #Handle the client configuration elements
   argl$python <- gsub("^(.*?) .*$","\\1",script)
   if(is.null(argl$module)) {
     argl$script <- gsub("^.*? (.*?) .*$","\\1",script)
   } else {
     argl$module <- NULL
   }
+  
+  #Handle variables explicitly, to deal with cases where 
+  var.idxs <- which(script.atoms=="--variable")
+  argl$variable <- script.atoms[var.idxs+1]
 
   #Set the options
   cfg <- do.call(CMEMS.config,argl)
@@ -193,10 +196,8 @@ CMEMS.download.advanced <- function(x,
                                     depth.max=NULL,
                                     quiet=FALSE,
                                     debug=FALSE) {
-  #First check for a valid configuration
-
   #Extract the rest of the options from the CMEMS.config object to be build into a command
-  slts.rest <- slotNames(x)[-which(slotNames(x) %in% c("python","script"))]
+  slts.rest <- slotNames(x)[-which(slotNames(x) %in% c("python","script","variable"))]
   cfg.l <- lapply(slts.rest,function(n) slot(x,n))
   names(cfg.l) <- slts.rest
   
@@ -204,7 +205,9 @@ CMEMS.download.advanced <- function(x,
   #If not, drop these from the arguments to the command - this should 
   #encourage the client to pick up the names from the local configuration file
   if(length(x@user)==0 | length(x@pwd)==0 ) {
-    message("RCMEMS: Username or password is missing - using local configuration file instead.")
+    if(!quiet) {
+      message("RCMEMS: Username or password is missing - using local configuration file instead.")
+    }
     cfg.l[c("user","pwd")] <- NULL
   }
   
@@ -232,6 +235,9 @@ CMEMS.download.advanced <- function(x,
   names(motu.args.l) <- gsub("\\.","-",names(motu.args.l))
   args.fmt <- sprintf("--%s=%s",names(motu.args.l),motu.args.l)
   
+  #Handle variables specifically - problematic when dealing with multiple variables
+  args.fmt <- c(args.fmt,paste("--variable",x@variable))
+
   #Add quietly, if necessary
   if(quiet) {args.fmt <- c(args.fmt,"--quiet")}
   
@@ -347,6 +353,6 @@ get.motu.client.version <- function(x) {
     client.cmd <- x@script
   }
   
-  rtn <- system2(command=x@python, args=c(client.cmd,"--version"))
+  rtn <- system2(command=x@python, args=c(client.cmd,"--version"),stdout=TRUE)
   return(rtn)
 }
