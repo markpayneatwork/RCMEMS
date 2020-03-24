@@ -4,7 +4,7 @@
 \alias{product.description}
 \title{Get product details}
 \usage{
-product.description(x, variable = "missing")
+product.description(x, variable = "missing", quiet = TRUE)
 }
 \arguments{
 \item{x}{An object of class \code{\link{CMEMS.config}} containing the configuration 
@@ -13,6 +13,8 @@ and \code{product.id} slots need to be populated.}
 
 \item{variable}{Specifies the object to return. Valid values are "times" and 
 "depths". All other values, including omission, return an xml object describing the product.}
+
+\item{quiet}{Logical, indicating whether to surpress output}
 }
 \description{
 Requests details from the CMEMS servers about a specific product, including temporal coverage
@@ -20,16 +22,16 @@ and depth layers
 }
 \details{
 This function returns the description that is associated with the particular product
-id.
+id. The depths result is self explanatory, but the times result can be hard to work with, as it
+is encoded in ISO 8061 format. See \url{https://github.com/clstoulouse/motu#describe-product} 
+for details.
 }
 \examples{
-\dontrun{
-cfg <- CMEMS.config(python="python",
-                    script="~/Documents/common_data/motu-client-python/motu-client.py",
-                    motu="http://cmems.isac.cnr.it/mis-gateway-servlet/Motu",
+#Setup a configuration object, using OSTIA as an example
+cfg <- CMEMS.config(motu="http://my.cmems-du.eu/motu-web/Motu",
                     service.id = "SST_GLO_SST_L4_REP_OBSERVATIONS_010_011-TDS",
-                    product.id = "METOFFICE-GLO-SST-L4-RAN-OBS-SST")
-SST.dates <- product.description(cfg,"times")
-range(as.Date(SST.dates))
-}
+                    product.id = "METOFFICE-GLO-SST-L4-RAN-OBS-SST",
+                    variable = c("analysed_sst","analysis_error"))
+#Time description is in ISO 8061 format
+product.description(cfg,"times")
 }

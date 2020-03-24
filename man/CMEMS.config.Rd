@@ -42,7 +42,7 @@ cas for Central Authentication Service}
 
 \item{\code{product.id}}{The product (data set) to download (string)}
 
-\item{\code{variable}}{The variable to download (vector of strings)}
+\item{\code{variable}}{The variable(s) to download (vector of strings)}
 
 \item{\code{date.min}}{The min date with optional hour resolution (string following format YYYY-MM-DD [HH:MM:SS])}
 

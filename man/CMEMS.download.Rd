@@ -26,6 +26,7 @@ CMEMS.download.advanced(
   longitude.max = NULL,
   depth.min = NULL,
   depth.max = NULL,
+  quiet = FALSE,
   debug = FALSE
 )
 }
@@ -62,6 +63,8 @@ in \code{\link{CMEMS.download}} function.}
 
 \item{depth.max}{The max depth (float in the interval [0 ; 2e31 ] or string 'Surface')}
 
+\item{quiet}{Logical value, indicating whether to surpress output}
+
 \item{debug}{Allows debugging of the motu client command - builds the command without running it (logical)}
 
 \item{describe.product}{It allows to have all updated information on a dataset. Output is in XML format}
@@ -86,18 +89,17 @@ use the local configuration file. See the README.md file supplied with the MOTU 
 to set this up.
 }
 \examples{
-\dontrun{
-library(raster)
-cfg <- CMEMS.config(python="python",
-                    motu="http://cmems.isac.cnr.it/mis-gateway-servlet/Motu",
+#Setup a configuration object, using OSTIA as an example
+cfg <- CMEMS.config(motu="http://my.cmems-du.eu/motu-web/Motu",
                     service.id = "SST_GLO_SST_L4_REP_OBSERVATIONS_010_011-TDS",
                     product.id = "METOFFICE-GLO-SST-L4-RAN-OBS-SST",
-                    variable = "analysed_sst")
+                    variable = c("analysed_sst","analysis_error"))
 CMEMS.download(cfg,
                ROI = extent(8,13,55,59),
                date.range = c(ISOdate(2001,08,01),ISOdate(2001,08,10)),
-               "test.nc",debug=FALSE)
-}
+               out.path="test.nc",
+               debug=FALSE)
+
 }
 \seealso{
 Details and documentation on the Motu client, including releases of the software 
