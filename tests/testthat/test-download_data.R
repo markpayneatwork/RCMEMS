@@ -14,9 +14,10 @@ tovar.test <- update(test.cfg,
 
 test_that("can download data", {
   skip_if_offline()
+  skip_on_cran()
   fname <- tempfile(fileext = ".nc")
   obj <- CMEMS.download(test.cfg,
-                 ROI = extent(8,13,55,59),
+                 ROI = c(8,13,55,59),
                  date.range = c(ISOdate(2001,08,01),ISOdate(2001,08,2)),
                  fname,
                  debug=FALSE,
@@ -26,9 +27,10 @@ test_that("can download data", {
 
 test_that("can download multiple variables", {
   skip_if_offline()
+  skip_on_cran()
   fname <- tempfile(fileext = ".nc")
   obj <- CMEMS.download(tovar.test,
-                        ROI = extent(8,13,55,59),
+                        ROI = c(8,13,55,59),
                         date.range = c(ISOdate(2001,08,01),ISOdate(2001,08,2)),
                         fname,
                         debug=FALSE,

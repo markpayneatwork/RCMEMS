@@ -27,6 +27,7 @@ is encoded in ISO 8061 format. See \url{https://github.com/clstoulouse/motu#desc
 for details.
 }
 \examples{
+\dontrun{
 #Setup a configuration object, using OSTIA as an example
 cfg <- CMEMS.config(motu="http://my.cmems-du.eu/motu-web/Motu",
                     service.id = "SST_GLO_SST_L4_REP_OBSERVATIONS_010_011-TDS",
@@ -34,4 +35,5 @@ cfg <- CMEMS.config(motu="http://my.cmems-du.eu/motu-web/Motu",
                     variable = c("analysed_sst","analysis_error"))
 #Time description is in ISO 8061 format
 product.description(cfg,"times")
+}
 }

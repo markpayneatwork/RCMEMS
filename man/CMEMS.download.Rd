@@ -33,9 +33,14 @@ CMEMS.download.advanced(
 \arguments{
 \item{x}{An object of class \code{\link{CMEMS.config}} containing the configuration parameters}
 
-\item{ROI}{An extent object from the raster package specifying the region of interest to subset}
+\item{ROI}{An vector of length 4 specifying the region of interest in the following order: 
+minimum longitude, maximum longitude, minimum latitude, maximum latitude. Note that this 
+structure mirrors that of the \code{raster::extent()} class and these can also be used
+directly here instead.}
 
 \item{date.range}{The maximum and minimum dates (vector of length two of class "Date")}
+
+\item{out.path}{The output path, including the directory and filename in one string.}
 
 \item{depth.range}{The maximum and minimum depths specificed as a vector of length 2 (float in the interval [0 ; 2e31 ] -
 does not accept 'Surface' as an argument)}
@@ -66,8 +71,6 @@ in \code{\link{CMEMS.download}} function.}
 \item{quiet}{Logical value, indicating whether to surpress output}
 
 \item{debug}{Allows debugging of the motu client command - builds the command without running it (logical)}
-
-\item{describe.product}{It allows to have all updated information on a dataset. Output is in XML format}
 }
 \value{
 If debug is TRUE, returns the full command to the motu client, ready to be run (via \code{system()}) or checked manually. If
@@ -89,17 +92,18 @@ use the local configuration file. See the README.md file supplied with the MOTU 
 to set this up.
 }
 \examples{
+\dontrun{
 #Setup a configuration object, using OSTIA as an example
 cfg <- CMEMS.config(motu="http://my.cmems-du.eu/motu-web/Motu",
                     service.id = "SST_GLO_SST_L4_REP_OBSERVATIONS_010_011-TDS",
                     product.id = "METOFFICE-GLO-SST-L4-RAN-OBS-SST",
                     variable = c("analysed_sst","analysis_error"))
 CMEMS.download(cfg,
-               ROI = extent(8,13,55,59),
+               ROI = c(8,13,55,59),
                date.range = c(ISOdate(2001,08,01),ISOdate(2001,08,10)),
                out.path="test.nc",
                debug=FALSE)
-
+}
 }
 \seealso{
 Details and documentation on the Motu client, including releases of the software 

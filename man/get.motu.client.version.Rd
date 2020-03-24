@@ -14,6 +14,8 @@ parameters. At a minimum, the \code{python} and \code{script} slots need to be p
 Returns the version number of the motu client specified by x
 }
 \examples{
+\dontrun{
 cfg <- CMEMS.config()
 get.motu.client.version(cfg)
+}
 }
