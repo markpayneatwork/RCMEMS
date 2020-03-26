@@ -4,13 +4,13 @@ RCMEMS provides an R interface to the Copernicus Marine Environment Monitoring S
 ## Quick start
 
 ### Dependencies
-RCMEMS acts as an R wrapper around the "MOTU" client developed by CLS in Tolouse, France. You will also need to download and install this client by following the instructions here:
+RCMEMS acts as an R wrapper around the "motuclient" developed by CLS in Tolouse, France. You will also need to download and install this client by following the instructions here:
 
 https://github.com/clstoulouse/motu-client-python
 
-RCMEMS has been rewritten to reflect changes in version 1.8.4 of the client. It is no-longer backwards compatable with previous versions.
+RCMEMS has been rewritten to reflect changes in version 1.8.4 of the client. It is no-longer backwards compatible with previous versions.
 
-The MOTU client is written in the Python language, which you will also need to install if you don't have it already. You can get Python from here:
+Motuclient is written in the Python language, which you will also need to install if you don't have it already. You can get Python from here:
 
 https://www.python.org/
 

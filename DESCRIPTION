@@ -1,17 +1,17 @@
 Package: RCMEMS
 Type: Package
-Title: R interface to the Copernicus Marine Environment Monitoring Service (CMEMS)
-Version: 1.0
+Title: Interface to the Copernicus Marine Environment Monitoring Service Datastore
+Version: 1.0.0
 Author: Mark R. Payne [aut, cre] (<https://orcid.org/0000-0001-5795-2481>)
 Maintainer: Mark R. Payne <mpay@aqua.dtu.dk> 
-Description: Provides an R-friendly wrapper around the Python-based motuclient that
+Description: Provides a R-based wrapper around the Python-based motuclient that
     can be used to download and subset data directly from the Copernicus Marine 
     Environmental Monitoring Service (CMEMS) data stores (<http://marine.copernicus.eu>).
 URL: https://github.com/markpayneatwork/RCMEMS
 BugReports: https://github.com/markpayneatwork/RCMEMS/issues
 License: GPL (>= 2)
 LazyData: TRUE
-Imports: methods
+Imports: methods, utils
 Suggests:
     raster,
     xml2,

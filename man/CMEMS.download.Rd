@@ -42,7 +42,7 @@ directly here instead.}
 
 \item{out.path}{The output path, including the directory and filename in one string.}
 
-\item{depth.range}{The maximum and minimum depths specificed as a vector of length 2 (float in the interval [0 ; 2e31 ] -
+\item{depth.range}{The maximum and minimum depths specified as a vector of length 2 (float in the interval [0 ; 2e31 ] -
 does not accept 'Surface' as an argument)}
 
 \item{...}{Arguments to be passed on further to the \code{\link{CMEMS.download.advanced}} function. Overwrites any arguments automatically generated
@@ -68,7 +68,7 @@ in \code{\link{CMEMS.download}} function.}
 
 \item{depth.max}{The max depth (float in the interval [0 ; 2e31 ] or string 'Surface')}
 
-\item{quiet}{Logical value, indicating whether to surpress output}
+\item{quiet}{Logical value, indicating whether to supress output}
 
 \item{debug}{Allows debugging of the motu client command - builds the command without running it (logical)}
 }
@@ -87,8 +87,8 @@ Arguments provided to  \code{\link{CMEMS.download}} and  \code{\link{CMEMS.downl
 any arguments supplied in the \code{\link{CMEMS.config}} object, x.
 
 If the  \code{\link{CMEMS.config}} object, x, is missing either the username or the
-password, both are dropped from the call to the MOTU client - in this case, the client will 
-use the local configuration file. See the README.md file supplied with the MOTU client for how
+password, both are dropped from the call to motuclient - in this case, the client will 
+use the local configuration file. See the README.md file supplied with motuclient for how
 to set this up.
 }
 \examples{

@@ -13,7 +13,7 @@ A class and generator function to store parameters used in configuring downloads
 \describe{
 \item{\code{python}}{Path to the local python installation}
 
-\item{\code{script}}{path to local script for the motuclient. If NULL, then the client is involked via use of the
+\item{\code{script}}{path to local script for the motuclient. If NULL, then the client is invoked via use of the
 "-m motuclient" argument to python (under the assumption that it is already installed)}
 
 \item{\code{user}}{user name (string)}
@@ -37,7 +37,7 @@ cas for Central Authentication Service}
 
 \item{\code{block.size}}{The block used to download file (integer expressing bytes)}
 
-\item{\code{motu}}{the motu server to use (url)}
+\item{\code{motu}}{the Motu server to use (url)}
 
 \item{\code{service.id}}{The service identifier (string)}
 

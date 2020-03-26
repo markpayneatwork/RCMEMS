@@ -97,7 +97,7 @@ parse.CMEMS.script <- function(script,parse.user=FALSE){
 #' structure mirrors that of the \code{raster::extent()} class and these can also be used
 #' directly here instead. 
 #' @param date.range The maximum and minimum dates (vector of length two of class "Date")
-#' @param depth.range The maximum and minimum depths specificed as a vector of length 2 (float in the interval [0 ; 2e31 ] -
+#' @param depth.range The maximum and minimum depths specified as a vector of length 2 (float in the interval [0 ; 2e31 ] -
 #' does not accept 'Surface' as an argument)
 #' @param ... Arguments to be passed on further to the \code{\link{CMEMS.download.advanced}} function. Overwrites any arguments automatically generated
 #' in \code{\link{CMEMS.download}} function.
@@ -112,13 +112,13 @@ parse.CMEMS.script <- function(script,parse.user=FALSE){
 #' @param out.dir The output dir (string)
 #' @param out.name The output file name (string)
 #' @param out.path The output path, including the directory and filename in one string.
-#' @param quiet Logical value, indicating whether to surpress output
+#' @param quiet Logical value, indicating whether to supress output
 #' @param debug Allows debugging of the motu client command - builds the command without running it (logical)
 #' @details Arguments provided to  \code{\link{CMEMS.download}} and  \code{\link{CMEMS.download.advanced}} override
 #' any arguments supplied in the \code{\link{CMEMS.config}} object, x.
 #' @details If the  \code{\link{CMEMS.config}} object, x, is missing either the username or the
-#' password, both are dropped from the call to the MOTU client - in this case, the client will 
-#' use the local configuration file. See the README.md file supplied with the MOTU client for how
+#' password, both are dropped from the call to motuclient - in this case, the client will 
+#' use the local configuration file. See the README.md file supplied with motuclient for how
 #' to set this up.
 #' @return If debug is TRUE, returns the full command to the motu client, ready to be run (via \code{system()}) or checked manually. If
 #' debug is FALSE (the default), runs the command and returns the error code associated with the motuclient.
@@ -279,7 +279,7 @@ CMEMS.download.advanced <- function(x,
 #' and \code{product.id} slots need to be populated.
 #' @param variable Specifies the object to return. Valid values are "times" and 
 #' "depths". All other values, including omission, return an xml object describing the product.
-#' @param quiet Logical, indicating whether to surpress output
+#' @param quiet Logical, indicating whether to supress output
 #' @details This function returns the description that is associated with the particular product
 #' id. The depths result is self explanatory, but the times result can be hard to work with, as it
 #' is encoded in ISO 8061 format. See \url{https://github.com/clstoulouse/motu#describe-product} 

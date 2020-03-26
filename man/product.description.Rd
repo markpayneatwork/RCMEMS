@@ -14,7 +14,7 @@ and \code{product.id} slots need to be populated.}
 \item{variable}{Specifies the object to return. Valid values are "times" and 
 "depths". All other values, including omission, return an xml object describing the product.}
 
-\item{quiet}{Logical, indicating whether to surpress output}
+\item{quiet}{Logical, indicating whether to supress output}
 }
 \description{
 Requests details from the CMEMS servers about a specific product, including temporal coverage

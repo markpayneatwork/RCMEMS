@@ -8,7 +8,7 @@
 #' @exportClass CMEMS.config
 #' @export CMEMS.config
 #' @slot python Path to the local python installation
-#' @slot script path to local script for the motuclient. If NULL, then the client is involked via use of the
+#' @slot script path to local script for the motuclient. If NULL, then the client is invoked via use of the
 #' "-m motuclient" argument to python (under the assumption that it is already installed)
 #' @slot user user name (string)
 #' @slot pwd user password (string)
@@ -21,7 +21,7 @@
 #' @slot user.agent Set the identification string (user-agent) for HTTP requests. By default this value is 'Python-urllib/x.x' (where x.x is the version of the python interpreter)
 #' @slot sync.mode Sets the download mode to synchronous (not recommended)
 #' @slot block.size The block used to download file (integer expressing bytes)
-#' @slot motu the motu server to use (url)
+#' @slot motu the Motu server to use (url)
 #' @slot service.id The service identifier (string)
 #' @slot product.id The product (data set) to download (string)
 #' @slot variable The variable(s) to download (vector of strings)
