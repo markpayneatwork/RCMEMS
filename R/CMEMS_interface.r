@@ -296,6 +296,9 @@ CMEMS.download.advanced <- function(x,
 #' product.description(cfg,"times")
 #' }
 product.description <- function(x,variable="missing",quiet=TRUE) {
+  #Check the configuration is sane
+  check.motuclient(x)
+
   #Extract the rest of the options from the CMEMS.config object to be build into a command
   extract.these <- c("motu","service.id","product.id")
   extract.l <- lapply(extract.these,function(n) slot(x,n))
@@ -343,22 +346,26 @@ product.description <- function(x,variable="missing",quiet=TRUE) {
 
 
 
-#' Get Motu client version
+#' Motuclient version numbers
 #' 
-#' Returns the version number of the motu client specified by x
+#' Checks that the installed motuclient is working and checks its version number.
 #'
+#' @name motuclient
 #' @param x An object of class \code{\link{CMEMS.config}} containing the configuration 
 #' parameters. At a minimum, the \code{python} and \code{script} slots need to be populated.
+#' If missing, the default \code{\link{CMEMS.config}} object is used.
 #'
-#' @return NULL
+#' @return \code{get.motuclient.version()} returns the raw version string from the motuclient
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' cfg <- CMEMS.config()
-#' get.motu.client.version(cfg)
+#' get.motuclient.version()
 #' }
-get.motu.client.version <- function(x) {
+get.motuclient.version <- function(x="missing") {
+  if(missing(x)) {
+    x <- CMEMS.config()
+  }
   #Decide how to run it
   if(is.na(x@script)) {
     client.cmd <- "-m motuclient"
@@ -366,6 +373,41 @@ get.motu.client.version <- function(x) {
     client.cmd <- x@script
   }
   
-  rtn <- system2(command=x@python, args=c(client.cmd,"--version"),stdout=TRUE)
+  rtn <- system2(command=x@python, args=c(client.cmd,"--version"),
+                 stdout=TRUE,
+                 stderr=TRUE)
+
   return(rtn)
+}
+
+#' @export
+#' @rdname motuclient
+#' @details \code{check.motuclient()}) first checks that the motuclient can be accessed and run. 
+#' It then checks the version number of this installed version against the minimum requirement 
+#' for this package (currently motuclient 1.8.4) and throws an error accordingly.
+check.motuclient <- function(x) {
+  #Set default
+  if(missing(x)) {
+    x <- CMEMS.config()
+  }
+  
+  #Set minimum version. Ideally we should also have a maximum version, e.g. if there is a new release
+  min.version="1.8.4"
+  
+  #Check that system is alive
+  ver.str.full <- try(get.motuclient.version(x))
+  if(is(ver.str.full,"try-error")) {
+    stop("Cannot contact motuclient. Check configuration and try again.")
+  }
+  
+  #Get version number
+  ver.str <- gsub("^.*?([0-9]*\\.*[0-9]*\\.*[0-9]*)$","\\1",ver.str.full)
+  valid.version <- compareVersion(ver.str,min.version) >= 0
+  if(!valid.version) {
+    stop(sprintf("RCMEMS does not support this version of motuclient. Installed version is %s. Min requirement for RCMEMS %s.",
+                 ver.str,
+                 min.version))
+  }
+  
+
 }
