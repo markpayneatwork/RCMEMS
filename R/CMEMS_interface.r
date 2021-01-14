@@ -309,6 +309,11 @@ product.description <- function(x,variable="missing",quiet=TRUE) {
   args.fmt <- c(sprintf("--%s=%s",names(extract.l),extract.l),
                 sprintf("--out-dir=%s",dirname(xml.fname)),
                 sprintf("--out-name=%s",basename(xml.fname)))
+  if(length(x@user)!=0 & length(x@pwd)!=0) {
+    args.fmt <- c(args.fmt,
+                  sprintf("--user=%s",x@user),
+                  sprintf("--pwd=%s",x@pwd))
+  }
   
   #Add quietly, if necessary
   if(quiet) {args.fmt <- c(args.fmt,"--quiet")}
@@ -343,8 +348,6 @@ product.description <- function(x,variable="missing",quiet=TRUE) {
   }
   return(rtn) 
 }
-
-
 
 #' Motuclient version numbers
 #' 
